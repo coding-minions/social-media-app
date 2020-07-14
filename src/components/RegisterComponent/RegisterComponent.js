@@ -9,7 +9,7 @@ import "./RegisterComponent.css";
 
 export const Register = () => {
   let title = SiteConfig.title;
-
+  console.log('inside Register Component');
   return (
     <section className="w-50 bg-white border px-5 pb-5 ml-4">
       <Row className="pt-5 text-center">
