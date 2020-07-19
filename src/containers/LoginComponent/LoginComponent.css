@@ -1,0 +1,31 @@
+.section {
+  padding-top: 200px;
+}
+
+.main-banner {
+  width: 100%;
+  max-width: 100%;
+}
+
+.login-form {
+  height: 50vh;
+}
+
+.form-control:focus {
+  box-shadow: none;
+  border-color: rgb(192, 191, 191) !important;
+}
+
+.form-control::placeholder {
+  color: rgb(192, 191, 191);
+  letter-spacing: 1px;
+}
+
+p {
+  color: slategray;
+}
+
+p .link:hover {
+  text-decoration: none;
+  color: #39a2f2;
+}

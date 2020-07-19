@@ -1,10 +1,5 @@
 /* helper classes */
 
 .prime-color {
-  color: #39a2f2;
-}
-
-h2 {
-  font-size: 2rem;
-  letter-spacing: 1px;
+  color: #39a2f2 !important;
 }

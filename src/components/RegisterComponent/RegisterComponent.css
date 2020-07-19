@@ -1,9 +1,0 @@
-.form-control {
-  background-color: #fafafa;
-}
-
-input:focus {
-  border: 1px solid #043536 !important;
-  box-shadow: none !important;
-  background-color: #fafafa !important;
-}
