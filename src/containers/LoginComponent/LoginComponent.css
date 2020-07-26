@@ -7,10 +7,6 @@
   max-width: 100%;
 }
 
-.login-form {
-  height: 50vh;
-}
-
 .form-control:focus {
   box-shadow: none;
   border-color: rgb(192, 191, 191) !important;
@@ -28,4 +24,8 @@ p {
 p .link:hover {
   text-decoration: none;
   color: #39a2f2;
+}
+
+.redirect-text {
+  margin-top: 5rem;
 }

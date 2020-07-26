@@ -8,9 +8,10 @@ var firebaseConfig = {
   projectId: "socio-app-c551b",
   storageBucket: "socio-app-c551b.appspot.com",
   messagingSenderId: "962545932422",
-  appId: "1:962545932422:web:69430b4b4138e6fe2b1907",
-  measurementId: "G-4X5KVPQVTF"
+  appId: "1:962545932422:web:cacca517f5079bc62b1907",
+  measurementId: "G-4WTGK7VQNL"
 };
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();

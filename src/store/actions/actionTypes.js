@@ -8,5 +8,4 @@ export const DELETE_POST = "DELETE_POST";
 export const REGISTER_USER = "REGISTER_USER";
 export const LOGIN_USER = "LOGIN_USER";
 
-export const CHECK_EMAIL = "CHECK_EMAIL";
-export const CHECK_PASSWORD = "CHECK_PASSWORD";
+export const IS_LOADING = "IS_LOADING";

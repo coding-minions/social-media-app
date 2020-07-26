@@ -3,15 +3,19 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { NavLink } from "react-router-dom";
+
+import { NavLink, Redirect, withRouter } from "react-router-dom";
+
+import { connect } from "react-redux";
 import * as $ from "jquery";
-import { withRouter } from "react-router-dom";
-import Axios from "axios";
 
 import { SiteConfig } from "../../config/siteConfig";
 import { getImgUrl } from "../../helpers/ImgHelper";
 import { LoaderComponent } from "../../shared/LoaderComponent/LoaderComponent";
+import { ToasterComponent } from "../../shared/ToasterComponent/ToasterComponent";
 import "./RegisterComponent.css";
+
+import { registerUser, startLoader } from "../../store/actions/authActions";
 
 class RegisterComponent extends React.Component {
   title = SiteConfig.title;
@@ -37,10 +41,15 @@ class RegisterComponent extends React.Component {
   }
 
   componentDidMount() {
+    document.title = "Sign up - " + this.title;
+
     this.registerBtn = $("#register-btn")[0];
-    this.registerBtn.disabled = true;
+    if (this.registerBtn != undefined) {
+      this.registerBtn.disabled = true;
+    }
   }
 
+  //email validation function
   checkEmail = event => {
     let emailValue = event.target.value;
     let result = this.emailRegex.test(emailValue);
@@ -57,6 +66,7 @@ class RegisterComponent extends React.Component {
       : (this.registerBtn.disabled = true);
   };
 
+  //password validation function
   checkPassword = event => {
     let passwordValue = event.target.value;
     let result = passwordValue.length > 0 ? true : false;
@@ -73,32 +83,39 @@ class RegisterComponent extends React.Component {
       : (this.registerBtn.disabled = true);
   };
 
-  registerUser = (email, password) => {
-    // console.log("Sending Request");
-
-    this.setState({ ...this.state, isLoading: true });
-    Axios.post(
-      "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" +
-        SiteConfig.firebaseAPIKey,
-      { email, password, returnSecureToken: true },
-      {
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
-    )
-      .then(response => {
-        console.log(response);
-        // this.setState({ ...this.state, isLoading: true });
-        this.history.push("/");
-      })
-      .catch(error => console.log("ERROR --> ", error, error.response));
+  //registering user
+  registerUser = () => {
+    this.props.startLoader();
+    this.props.registerUser(this.state.email, this.state.password);
   };
 
   render() {
+    if (this.props.isAuthenticated) {
+      return <Redirect to="/dashboard" />;
+    }
+
     return (
       <section className="section">
-        {this.state.isLoading ? (
+        {this.props.isEmailExist ? (
+          <ToasterComponent
+            class="alert alert-danger"
+            heading="Failure"
+            msg="Email Already Exist"
+          />
+        ) : (
+          ""
+        )}
+        {this.props.isServerError ? (
+          <ToasterComponent
+            class="alert alert-danger"
+            heading="Failure"
+            msg="Some Error Occured, Please try after some time"
+          />
+        ) : (
+          ""
+        )}
+
+        {this.props.isLoading ? (
           <LoaderComponent />
         ) : (
           <Row className="row">
@@ -114,7 +131,7 @@ class RegisterComponent extends React.Component {
                       type="email"
                       placeholder="Enter Your Email"
                       pattern={this.emailRegex}
-                      onChange={event => this.checkEmail(event)}
+                      onBlur={event => this.checkEmail(event)}
                     />
                     {this.state.isEmailTouched && !this.state.isEmailValid ? (
                       <Form.Text className="small text-danger">
@@ -142,15 +159,13 @@ class RegisterComponent extends React.Component {
                   <Button
                     className="w-100"
                     id="register-btn"
-                    onClick={() => {
-                      this.registerUser(this.state.email, this.state.password);
-                    }}
+                    onClick={this.registerUser}
                   >
                     Sign Up
                   </Button>
                 </Form>
 
-                <div className="text-right mt-5">
+                <div className="text-right redirect-text">
                   <p className="pt-5">
                     Already Registered!{" "}
                     <NavLink className="link prime-color" to="/">
@@ -174,4 +189,23 @@ class RegisterComponent extends React.Component {
   }
 }
 
-export default withRouter(RegisterComponent);
+const mapStateToProps = state => {
+  return {
+    isLoading: state.authReducer.isLoading,
+    isEmailExist: state.authReducer.isEmailExist,
+    isServerError: state.authReducer.isServerError,
+    isAuthenticated: state.authReducer.isAuthenticated
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    startLoader: () => dispatch(startLoader()),
+    registerUser: (email, password) => dispatch(registerUser(email, password))
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(RegisterComponent));
