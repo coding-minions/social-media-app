@@ -2,7 +2,7 @@
 
 A cool, efficient, and easy-to-use Social Media App for communicating with friends.
 
-# Authors : Vikrant Bhadauriya, Anmol Raj Arora
+# Authors : Vikrant Bhadauria, Anmol Raj Arora
 • This repository consists of files required to deploy a ___Social Media Web App___ created with ___React.js___ and ___Firebase___ .
 
 # Deliverables: 
