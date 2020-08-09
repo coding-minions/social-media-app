@@ -4,7 +4,7 @@ import "./LoaderComponent.css";
 
 export const LoaderComponent = () => {
   return (
-    <div className="loading">
+    <div className="loading mt-5">
       <div className="lds-ellipsis">
         <div></div>
         <div></div>

@@ -1,11 +1,16 @@
-import { IS_LOADING, REGISTER_USER, LOGIN_USER } from "../actions/actionTypes";
+import {
+  IS_LOADING,
+  REGISTER_USER,
+  LOGIN_USER,
+  ADJUST_ERROR
+} from "../actions/actionTypes";
 import { EMAIL_EXISTS } from "../actions/errorMsg";
 
 const initState = {
   user: null,
   isAuthenticated: false,
-  isEmailExist: false,
-  isServerError: false,
+  isError: false,
+  errorMsg: "",
   isLoading: false
 };
 
@@ -24,16 +29,10 @@ const authReducer = (state = initState, action) => {
 
     //register case
     case REGISTER_USER:
-      if (payload.failure && payload.errorMsg == EMAIL_EXISTS) {
+      if (payload.failure) {
         return {
           ...state,
-          isEmailExist: true,
-          isLoading: false
-        };
-      } else if (payload.failue) {
-        return {
-          ...state,
-          isServerError: true,
+          isError: true,
           isLoading: false
         };
       } else if (payload.success) {
@@ -43,27 +42,40 @@ const authReducer = (state = initState, action) => {
           isLoading: false,
           user: payload.response
         };
+      } else {
+        return state;
       }
-      break;
 
     //login case
     case LOGIN_USER:
-      if (payload.failue) {
+      if (payload.failure) {
+        // console.log("inside error");
         return {
           ...state,
-          // isServerError: true,
-          isLoading: false
+          isLoading: false,
+          isError: true,
+          errorMsg: payload.errorMsg
         };
       } else if (payload.success) {
+        // console.log("inside success");
+
         return {
           ...state,
           isAuthenticated: true,
           isLoading: false,
           user: payload.response
         };
+      } else {
+        // console.log("inside else login user");
+        return { ...state, isLoading: false };
       }
 
-      break;
+    case ADJUST_ERROR:
+      return {
+        ...state,
+        isError: false
+      };
+
     //default case
     default:
       return state;

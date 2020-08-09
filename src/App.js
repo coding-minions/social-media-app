@@ -5,7 +5,7 @@ import Home from "./containers/Home/HomeComponent";
 
 function App() {
   return (
-    <div className="container">
+    <div>
       <Home />
     </div>
   );

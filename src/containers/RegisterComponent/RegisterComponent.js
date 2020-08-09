@@ -3,6 +3,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Image from "react-bootstrap/Image";
 
 import { NavLink, Redirect, withRouter } from "react-router-dom";
 
@@ -20,7 +21,7 @@ import { registerUser, startLoader } from "../../store/actions/authActions";
 class RegisterComponent extends React.Component {
   title = SiteConfig.title;
   mainBannerImage = "home-banner-image.png";
-  emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
+  emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
 
   registerBtn = null;
   history = null;
@@ -44,7 +45,7 @@ class RegisterComponent extends React.Component {
     document.title = "Sign up - " + this.title;
 
     this.registerBtn = $("#register-btn")[0];
-    if (this.registerBtn != undefined) {
+    if (this.registerBtn !== undefined) {
       this.registerBtn.disabled = true;
     }
   }
@@ -90,8 +91,8 @@ class RegisterComponent extends React.Component {
   };
 
   render() {
-    if (this.props.isAuthenticated) {
-      return <Redirect to="/dashboard" />;
+    if (this.props.isAuthenticated || localStorage.getItem("authToken")) {
+      this.props.history.push("/dashboard");
     }
 
     return (
@@ -121,6 +122,10 @@ class RegisterComponent extends React.Component {
           <Row className="row">
             <Col lg={5} className="shadow rounded px-0 register-form">
               <div className="py-3 px-5">
+                <Image
+                  src={getImgUrl(this.mainBannerImage)}
+                  className="d-lg-none d-sm-block main-banner-mobile mb-3 pt-3"
+                />
                 <div className="text-center my-5">
                   <h5 className="prime-color">Register on {this.title} </h5>
                 </div>
@@ -131,7 +136,11 @@ class RegisterComponent extends React.Component {
                       type="email"
                       placeholder="Enter Your Email"
                       pattern={this.emailRegex}
-                      onBlur={event => this.checkEmail(event)}
+                      onBlur={event => {
+                        if (event.target.value.length > 0) {
+                          this.checkEmail(event);
+                        }
+                      }}
                     />
                     {this.state.isEmailTouched && !this.state.isEmailValid ? (
                       <Form.Text className="small text-danger">
@@ -168,7 +177,7 @@ class RegisterComponent extends React.Component {
                 <div className="text-right redirect-text">
                   <p className="pt-5">
                     Already Registered!{" "}
-                    <NavLink className="link prime-color" to="/">
+                    <NavLink exact={true} className="link prime-color" to="/">
                       Sign In here
                     </NavLink>
                   </p>
@@ -176,7 +185,7 @@ class RegisterComponent extends React.Component {
               </div>
             </Col>
             <Col lg={7} className=" px-0">
-              <img
+              <Image
                 src={getImgUrl(this.mainBannerImage)}
                 className="main-banner"
                 alt=""
@@ -192,8 +201,8 @@ class RegisterComponent extends React.Component {
 const mapStateToProps = state => {
   return {
     isLoading: state.authReducer.isLoading,
-    isEmailExist: state.authReducer.isEmailExist,
-    isServerError: state.authReducer.isServerError,
+    errorMsg: state.authReducer.errorMsg,
+    isError: state.authReducer.isError,
     isAuthenticated: state.authReducer.isAuthenticated
   };
 };

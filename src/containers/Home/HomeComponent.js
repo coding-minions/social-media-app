@@ -6,8 +6,9 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import "./HomeComponent.css";
 import LoginComponent from "../LoginComponent/LoginComponent";
 import RegisterComponent from "../RegisterComponent/RegisterComponent";
-import { DashboardComponent } from "../Dashboard/DashboardComponent";
+import DashboardComponent from "../Dashboard/DashboardComponent";
 import { connect } from "react-redux";
+import HeaderComponent from "../../components/HeaderComponent/HeaderComponent";
 
 class HomeComponent extends Component {
   constructor(props) {
@@ -17,20 +18,28 @@ class HomeComponent extends Component {
   render() {
     return (
       <div>
-        <Row>
-          <Col>
-            <Switch>
-              <Route exact path="/" component={LoginComponent} />
-              <Route path="/register" component={RegisterComponent} />
+        <HeaderComponent />
+        <div className="container">
+          <Row>
+            <Col>
+              <Switch>
+                <Route exact path="/" component={LoginComponent} />
+                <Route path="/register" component={RegisterComponent} />
 
-              {this.props.isAuthenticated ? (
-                <Route path="/dashboard" component={DashboardComponent} />
-              ) : (
-                <Redirect to="/" />
-              )}
-            </Switch>
-          </Col>
-        </Row>
+                {this.props.isAuthenticated || window.localStorage.authToken ? (
+                  <Route path="/dashboard" component={DashboardComponent} />
+                ) : (
+                  <Redirect to="/" />
+                )}
+              </Switch>
+            </Col>
+          </Row>
+          {/* <RegisterComponent />
+          <RegisterComponent />
+          <RegisterComponent />
+
+          <RegisterComponent /> */}
+        </div>
       </div>
     );
   }

@@ -1,11 +1,23 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 
-export class DashboardComponent extends Component {
+import { SiteConfig } from "../../config/siteConfig";
+
+class DashboardComponent extends Component {
+  title = SiteConfig.title;
+
+  componentDidMount() {
+    document.title = "Dashboard - " + this.title;
+    console.log(this.props.location.source);
+  }
+
   render() {
     return (
-      <div>
+      <section className="section-100">
         <h1>Dashboard</h1>
-      </div>
+      </section>
     );
   }
 }
+
+export default withRouter(DashboardComponent);

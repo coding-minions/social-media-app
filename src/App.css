@@ -1,5 +1,10 @@
+@import url("../node_modules/react-toastify/dist/ReactToastify.css");
 /* helper classes */
 
 .prime-color {
   color: #39a2f2 !important;
+}
+
+.section-100 {
+  padding-top: 100px !important;
 }

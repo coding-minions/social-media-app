@@ -1,20 +1,28 @@
 import React from "react";
-import Toast from "react-bootstrap/Toast";
+import { useToasts } from "react-toast-notifications";
+import { toast, ToastContainer } from "react-toastify";
 
 export const ToasterComponent = props => {
+  if (props.error) {
+    toast.error(props.msg, {
+      position: "top-right",
+      autoClose: 4000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true
+    });
+  } else if (props.success) {
+    toast.success(props.msg, {
+      position: "top-right",
+      autoClose: 4000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true
+    });
+  }
   return (
     <>
-      <Toast
-        className={props.class}
-        style={{ position: "absolute", top: "5%", right: "5%" }}
-        delay={3000}
-        autohide
-      >
-        <Toast.Header>
-          <strong>{props.heading}</strong>
-        </Toast.Header>
-        <Toast.Body>{props.msg}</Toast.Body>
-      </Toast>
+      <ToastContainer />
     </>
   );
 };

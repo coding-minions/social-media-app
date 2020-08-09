@@ -1,4 +1,9 @@
-import { LOGIN_USER, REGISTER_USER, IS_LOADING } from "./actionTypes";
+import {
+  LOGIN_USER,
+  REGISTER_USER,
+  IS_LOADING,
+  ADJUST_ERROR
+} from "./actionTypes";
 import { SiteConfig } from "../../config/siteConfig";
 import Axios from "axios";
 
@@ -39,11 +44,12 @@ export const registerUser = (email, password) => {
       }
     )
       .then(success => {
-        console.log(success);
+        // console.log(success);
+        localStorage.setItem("authToken", success.data.refreshToken);
         dispatch(userRegisterSuccess(success));
       })
       .catch(failure => {
-        console.log(failure.response);
+        // console.log(failure.response);
         dispatch(userRegisterFail(failure.response));
       });
   };
@@ -56,6 +62,9 @@ export const startLoader = () => {
 };
 
 const userLoginSuccess = response => {
+  // console.log(response.data.refreshToken);
+  // window.localStorage.authToken = response.data.refreshToken;
+
   return {
     type: LOGIN_USER,
     payload: {
@@ -66,12 +75,20 @@ const userLoginSuccess = response => {
 };
 
 const userLoginFail = errorRes => {
+  console.log(errorRes);
+
   return {
     type: LOGIN_USER,
     payload: {
       errorMsg: errorRes.data.error.message,
       failure: true
     }
+  };
+};
+
+export const adjustIsError = () => {
+  return {
+    type: ADJUST_ERROR
   };
 };
 
@@ -95,6 +112,7 @@ export const loginUser = (email, password) => {
     )
       .then(success => {
         console.log(success);
+        localStorage.setItem("authToken", success.data.refreshToken);
         dispatch(userLoginSuccess(success));
       })
       .catch(failure => {

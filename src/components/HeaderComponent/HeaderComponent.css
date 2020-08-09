@@ -1,0 +1,29 @@
+nav {
+  background-color: rgba(57, 162, 242, 0.85);
+  width: 100%;
+  position: fixed !important;
+  z-index: 20;
+}
+
+a.navbar-brand {
+  color: white;
+  font-size: 1.5rem;
+}
+
+a.nav-link {
+  color: #faf5f5 !important;
+  font-size: 1rem;
+}
+
+a.nav-link:hover,
+a.navbar-brand:hover {
+  color: white;
+}
+
+.active {
+  color: white !important;
+}
+
+button.navbar-toggler {
+  background-color: white;
+}

@@ -3,9 +3,11 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Image from "react-bootstrap/Image";
 
 import { NavLink, withRouter, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
+import { ToastProvider } from "react-toast-notifications";
 
 import * as $ from "jquery";
 
@@ -14,15 +16,19 @@ import { getImgUrl } from "../../helpers/ImgHelper";
 import { LoaderComponent } from "../../shared/LoaderComponent/LoaderComponent";
 import "./LoginComponent.css";
 
-import { loginUser, startLoader } from "../../store/actions/authActions";
+import {
+  loginUser,
+  startLoader,
+  adjustIsError
+} from "../../store/actions/authActions";
+import { ToasterComponent } from "../../shared/ToasterComponent/ToasterComponent";
 
 class LoginComponent extends React.Component {
   title = SiteConfig.title;
   mainBannerImage = "home-banner-image.png";
-  emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
+  emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
 
   loginBtn = null;
-  history = null;
 
   state = {
     email: null,
@@ -35,19 +41,22 @@ class LoginComponent extends React.Component {
 
   constructor(props) {
     super(props);
-    this.history = this.props.history;
   }
 
   componentDidMount() {
     document.title = this.title;
 
     this.loginBtn = $("#login-btn")[0];
-    if (this.loginBtn != undefined) {
+    if (this.loginBtn !== undefined) {
       this.loginBtn.disabled = true;
     }
   }
 
   checkEmail = event => {
+    if (this.props.isError) {
+      this.props.adjustIsError();
+    }
+
     let emailValue = event.target.value;
     let result = this.emailRegex.test(emailValue);
 
@@ -85,18 +94,30 @@ class LoginComponent extends React.Component {
   };
 
   render() {
-    if (this.props.isAuthenticated) {
-      return <Redirect to="/dashboard" />;
+    if (this.props.isAuthenticated || localStorage.getItem("authToken")) {
+      this.props.history.push({ pathname: "/dashboard", source: "login" });
     }
 
     return (
       <section className="section">
+        {this.props.isError ? (
+          <ToasterComponent
+            error={this.props.isError}
+            msg={this.props.errorMsg}
+          />
+        ) : null}
+
         {this.props.isLoading ? (
           <LoaderComponent />
         ) : (
           <Row className="row">
-            <Col lg={5} className="shadow rounded px-0 login-form">
+            <Col xl={5} lg={5} className="shadow rounded px-0 login-form">
               <div className="py-3 px-5">
+                <Image
+                  src={getImgUrl(this.mainBannerImage)}
+                  className="main-banner-mobile d-sm-block d-lg-none"
+                  alt=""
+                />
                 <div className="text-center my-5">
                   <h5 className="prime-color">Log in to {this.title} </h5>
                 </div>
@@ -108,7 +129,11 @@ class LoginComponent extends React.Component {
                       placeholder="Enter Your Email"
                       pattern={this.emailRegex}
                       required
-                      onBlur={event => this.checkEmail(event)}
+                      onBlur={event => {
+                        if (event.target.value.length > 0) {
+                          this.checkEmail(event);
+                        }
+                      }}
                     />
                     {this.state.isEmailTouched && !this.state.isEmailValid ? (
                       <Form.Text className="small text-danger">
@@ -153,8 +178,8 @@ class LoginComponent extends React.Component {
                 </div>
               </div>
             </Col>
-            <Col lg={7} className=" px-0">
-              <img
+            <Col lg={7} className="px-0">
+              <Image
                 src={getImgUrl(this.mainBannerImage)}
                 className="main-banner"
                 alt=""
@@ -170,7 +195,8 @@ class LoginComponent extends React.Component {
 const mapStateToProps = state => {
   return {
     isLoading: state.authReducer.isLoading,
-    isServerError: state.authReducer.isServerError,
+    isError: state.authReducer.isError,
+    errorMsg: state.authReducer.errorMsg,
     isAuthenticated: state.authReducer.isAuthenticated
   };
 };
@@ -178,7 +204,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     startLoader: () => dispatch(startLoader()),
-    loginUser: (email, password) => dispatch(loginUser(email, password))
+    loginUser: (email, password) => dispatch(loginUser(email, password)),
+    adjustIsError: () => dispatch(adjustIsError())
   };
 };
 

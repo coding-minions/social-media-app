@@ -2,7 +2,8 @@
   padding-top: 200px;
 }
 
-.main-banner {
+.main-banner,
+.main-banner-mobile {
   width: 100%;
   max-width: 100%;
 }
@@ -28,4 +29,19 @@ p .link:hover {
 
 .redirect-text {
   margin-top: 5rem;
+}
+
+@media (max-width: 992px) {
+  .main-banner {
+    display: none;
+  }
+  .section {
+    padding-top: 150px;
+  }
+}
+
+@media (max-width: 767px) {
+  .section {
+    padding-top: 100px;
+  }
 }
